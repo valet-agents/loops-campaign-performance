@@ -7,6 +7,9 @@ description: >-
   ad-hoc campaign performance questions.
 category: growth
 
+example:
+  prompt: "How's the Q2 nurture sequence performing?"
+
 story:
   hero: "Know what's working in your email campaigns without opening Loops."
   subheadline: >-

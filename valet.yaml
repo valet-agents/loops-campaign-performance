@@ -1,0 +1,76 @@
+name: loops-campaign-performance
+display_name: Loops Campaign Performance
+description: >-
+  Reads Loops every weekday morning and posts which email campaigns
+  are landing — and which are quietly dying — to whichever Slack
+  channel the bot has been invited to. @mention it any time for
+  ad-hoc campaign performance questions.
+category: growth
+
+story:
+  hero: "Know what's working in your email campaigns without opening Loops."
+  subheadline: >-
+    Each morning it reads opens, clicks, and replies — and posts
+    which sequences are landing and which are quietly dying.
+  steps:
+    - role: trigger
+      title: "8am hits."
+      body: >-
+        The cron fires Monday through Friday. No dashboard to open,
+        no weekly report to chase down.
+    - role: action
+      title: "It reads yesterday's opens, clicks, replies."
+      body: >-
+        Pulls metrics for every active campaign and sequence,
+        compares 7-day reply rates against the prior week, and
+        flags sequences quietly dying.
+      catalog: loops
+    - role: outcome
+      title: "What's landing and what's dying — posted in Slack."
+      body: >-
+        A scannable table of top campaigns plus a callout of any
+        sequence whose reply rate just collapsed.
+      catalog: slack
+
+connectors:
+  - catalog: loops
+    description: >-
+      The Loops CLI, authenticated with a Loops API key. The agent
+      lists campaigns and sequences, pulls aggregate metrics
+      (sends, opens, clicks, replies, unsubscribes), and computes
+      rates and week-over-week comparisons. Writes (transactional
+      sends, contact list edits) only happen when a Slack user
+      explicitly asks and confirms in-thread.
+    slot_descriptions:
+      LOOPS_API_KEY: >-
+        A Loops API key. Create one at app.loops.so/settings/api —
+        a read-only key is enough for the daily digest and ad-hoc
+        Q&A. Use a read-write key only if you want the agent to
+        send transactional emails or edit contact lists on request.
+    ui:
+      headline: "Connect Loops with an API key."
+      blurb: >-
+        Paste a Loops API key from app.loops.so/settings/api. The
+        agent uses it to read campaign metrics and (only on
+        explicit Slack confirmation) trigger transactional sends.
+      done_note: "Loops connected"
+
+channels:
+  - catalog: slack
+    description: >-
+      The agent gets its own Slack bot. Invite it to whichever
+      channels you want the daily campaign digest in, and to any
+      other channel where teammates should be able to @mention it
+      for ad-hoc Loops performance questions.
+    ui:
+      headline: "Give Campaign Performance a Slack bot."
+      blurb: >-
+        The agent posts the daily digest to every channel you
+        invite it to. Invite it to one growth channel, or several —
+        whatever matches how your team works.
+      done_note: "Bot ready — invite it to a channel"
+
+  - type: cron
+    cron: "0 8 * * 1-5"
+    timezone: America/Los_Angeles
+    description: "Fires the daily campaign performance digest at 8am Pacific, Monday through Friday."
